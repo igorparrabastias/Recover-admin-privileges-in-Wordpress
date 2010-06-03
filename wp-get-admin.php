@@ -7,6 +7,7 @@
  *
  *  - Wordpress/MU 2.0+
  *  - ftp or shell access to WP root foolder
+ *  - PHP 4.2+
  *
  * USAGE
  *
