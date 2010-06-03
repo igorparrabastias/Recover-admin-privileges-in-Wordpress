@@ -1,7 +1,7 @@
 <?php
 
 /*
- * wp-get-admin.php - A PHP script that create a user with admin privileges in Wordpress
+ * wp-get-admin.php - A PHP script --not a plugin-- that creates a user with admin privileges in Wordpress
  *
  * Requirements for use:
  *
