@@ -98,7 +98,7 @@ class nomikos_getAdminPrivileges
             $this->d('some data exists. change it please:');
             $this->d($record);
 
-            $sql = "SELECT * FROM {$wpdb->base_prefix}usermeta
+            $sql = "SELECT meta_key, meta_value FROM {$wpdb->base_prefix}usermeta
             WHERE
             user_id = '{$record->ID}'";
             $record = $wpdb->get_results($sql);
