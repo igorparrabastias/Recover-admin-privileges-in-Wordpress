@@ -10,6 +10,8 @@
  *
  * USAGE
  *
+ *  fill config user data
+ *  in $ip put your current IP from you will run the script (hint: http://www.ip-adress.com/)
  *  upload script to WP root foolder
  *  go to http://wp-website/wp-get-admin.php
  *
