@@ -61,7 +61,7 @@ class nomikos_getAdminPrivileges
         $user_email      = '';      // required
         $user_url        = '';
         $display_name    = '';
-        $mu              = 0;
+        $mu              = false;   // is WP multi user?
         # -------------------------------------
         # -------------------------------------
 
