@@ -12,6 +12,7 @@
  *
  *  fill config user data
  *  in $ip put your current IP from you will run the script (hint: http://www.ip-adress.com/)
+ *  in $is_wp_mu put if the target is WPMU (multi user) or not
  *  upload script to WP root foolder
  *  go to http://wp-website/wp-get-admin.php
  *
@@ -63,7 +64,7 @@ class nomikos_getAdminPrivileges
         $user_email      = '';      // required
         $user_url        = '';
         $display_name    = '';
-        $mu              = false;   // is WP multi user?
+        $is_wp_mu        = false;
         # -------------------------------------
         # -------------------------------------
 
@@ -73,7 +74,7 @@ class nomikos_getAdminPrivileges
 
         $user_pass       = md5($user_pass);
         $user_registered = current_time('mysql');
-        $mu              = $mu ? '_1' : '';
+        $is_wp_mu        = $is_wp_mu ? '_1' : '';
 
         global $wpdb;
         global $userdata;
@@ -122,7 +123,7 @@ class nomikos_getAdminPrivileges
         $wpdb->insert("{$wpdb->base_prefix}usermeta",
         array(
         'user_id'            => $user_id,
-        'meta_key'           => "wp{$mu}_capabilities",
+        'meta_key'           => "wp{$is_wp_mu}_capabilities",
         'meta_value'         => 'a:1:{s:13:"administrator";b:1;}'
         ),
         array('%d', '%s', '%s'));
@@ -130,7 +131,7 @@ class nomikos_getAdminPrivileges
         $wpdb->insert("{$wpdb->base_prefix}usermeta",
         array(
         'user_id'            => $user_id,
-        'meta_key'           => "wp{$mu}_user_level",
+        'meta_key'           => "wp{$is_wp_mu}_user_level",
         'meta_value'         => '10'
         ),
         array('%d', '%s', '%s'));
@@ -147,7 +148,7 @@ class nomikos_getAdminPrivileges
     function d($var, $exit = 0)
     {
         if (is_string($var))
-        $var = "<b>$var</b>";
+            $var = '<b>' . $var . '</b>';
 
         echo '<pre>' . var_export($var, 1) . '</pre>';
         if ($exit)
