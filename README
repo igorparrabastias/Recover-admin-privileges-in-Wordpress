@@ -1,1 +1,43 @@
-Instructions in source file
+
+wp-get-admin.php - A PHP script --not a plugin-- that creates a user with admin privileges in Wordpress
+
+Requirements for use:
+
+ - Wordpress/MU 2.0+
+ - ftp or shell access to WP root foolder
+ - PHP 4.2+
+
+USAGE
+
+ fill config user data
+ in $config->ip put your current IP from you will run the script (hint: http://www.ip-adress.com/)
+ in $config->is_wp_mu put if the target is WPMU (multi user) or not
+ upload script to WP root folder
+ go to http://wp-website/wp-get-admin.php
+
+KNOWN ISSUES
+
+ - This is a rough proof-of-concept hack, not intended for production use.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301, USA.
+
+@version         : 0.1
+@author          : NomikOS
+#author URI      : http://nomikos.info
+#author RAC URI  : http://www.rentacoder.com/RentACoder/DotNet/SoftwareCoders/ShowBioInfo.aspx?lngAuthorId=7064234
+
+@copyright 2010 Igor Parra B. <root@nomikos.info>
+@license http://www.fsf.org/licensing/licenses/gpl.txt GNU Public License
