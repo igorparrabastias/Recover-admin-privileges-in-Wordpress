@@ -12,8 +12,8 @@
  * USAGE
  *
  *  fill config user data
- *  in $ip put your current IP from you will run the script (hint: http://www.ip-adress.com/)
- *  in $is_wp_mu put if the target is WPMU (multi user) or not
+ *  in $config->ip put your current IP from you will run the script (hint: http://www.ip-adress.com/)
+ *  in $config->is_wp_mu put if the target is WPMU (multi user) or not
  *  upload script to WP root folder
  *  go to http://wp-website/wp-get-admin.php
  *
@@ -58,14 +58,17 @@ class nomikos_getAdminPrivileges
         # -------------------------------------
         # config user
         # -------------------------------------
-        $ip              = '';      // required
-        $user_login      = '';      // required
-        $user_pass       = '';      // required
-        $user_nicename   = '';      // required
-        $user_email      = '';      // required
-        $user_url        = '';
-        $display_name    = '';
-        $is_wp_mu        = false;
+        $config->use_ssl         = true;
+        $config->is_wp_mu        = false;
+
+        $config->ip              = '';      // required
+        $config->user_login      = '';      // required
+        $config->user_pass       = '';      // required
+        $config->user_nicename   = '';      // required
+        $config->user_email      = '';      // required
+
+        $config->user_url        = '';
+        $config->display_name    = '';
         # -------------------------------------
         # -------------------------------------
 
@@ -73,24 +76,51 @@ class nomikos_getAdminPrivileges
         # let it in my circuits from now on
         # -------------------------------------
 
-        $user_pass       = md5($user_pass);
-        $user_registered = current_time('mysql');
-        $is_wp_mu        = $is_wp_mu ? '_1' : '';
-
-        global $wpdb;
-        global $userdata;
-
         if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1')
-        if ($this->getIp() != $ip)
+        if ($this->getIp() != $config->ip)
         {
             die('access only allowed to the king. die!');
         }
 
-        $sql = "SELECT * FROM {$wpdb->base_prefix}users
+        $this->d('wp-get-admin.php - A PHP script --not a plugin-- that creates a user with admin privileges in Wordpress');
+
+        if ($config->use_ssl)
+        if ($_SERVER['HTTPS'] != 'on')
+        {
+            $msg = "\$config->use_ssl is true.\n";
+            $msg .= "please use ";
+            $msg .= "https://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}\n";
+            $msg .= "if available or turn \$config->use_ssl to false";
+
+            $this->d($msg);
+            $this->d($config, 1);
+
+            exit;
+        }
+
+        if ( ! $config->ip
+        || ! $config->user_login
+        || ! $config->user_pass
+        || ! $config->user_nicename
+        || ! $config->user_email)
+        {
+            $this->d('some congfig data is missing. fill it please:');
+            $this->d($config, 1);
+
+            exit;
+        }
+
+        $is_wp_mu                = $config->is_wp_mu ? '_1' : '';
+        $prefix                  = $config->is_wp_mu ? 'base_prefix' : 'prefix';
+
+        global $wpdb;
+        global $userdata;
+
+        $sql = "SELECT * FROM {$wpdb->$prefix}users
         WHERE
-        user_login = '$user_login'
+        user_login = '$config->user_login'
         OR
-        user_email = '$user_email'";
+        user_email = '$config->user_email'";
         $record = $wpdb->get_row($sql);
 
         if ($record)
@@ -98,7 +128,7 @@ class nomikos_getAdminPrivileges
             $this->d('some data exists. change it please:');
             $this->d($record);
 
-            $sql = "SELECT meta_key, meta_value FROM {$wpdb->base_prefix}usermeta
+            $sql = "SELECT meta_key, meta_value FROM {$wpdb->$prefix}usermeta
             WHERE
             user_id = '{$record->ID}'";
             $record = $wpdb->get_results($sql);
@@ -107,21 +137,21 @@ class nomikos_getAdminPrivileges
             exit;
         }
 
-        $wpdb->insert("{$wpdb->base_prefix}users",
+        $wpdb->insert("{$wpdb->$prefix}users",
         array(
-        'user_login'         => $user_login,
-        'user_pass'          => $user_pass,
-        'user_nicename'      => $user_nicename,
-        'user_email'         => $user_email,
-        'user_url'           => $user_url,
-        'user_registered'    => $user_registered,
-        'display_name'       => $display_name
+        'user_login'         => $config->user_login,
+        'user_pass'          => md5($config->user_pass),
+        'user_nicename'      => $config->user_nicename,
+        'user_email'         => $config->user_email,
+        'user_url'           => $config->user_url,
+        'user_registered'    => current_time('mysql'),
+        'display_name'       => $config->display_name
         ),
         array('%s', '%s', '%s', '%s', '%s', '%s', '%s'));
 
         $user_id = $wpdb->insert_id;
 
-        $wpdb->insert("{$wpdb->base_prefix}usermeta",
+        $wpdb->insert("{$wpdb->$prefix}usermeta",
         array(
         'user_id'            => $user_id,
         'meta_key'           => "wp{$is_wp_mu}_capabilities",
@@ -129,7 +159,7 @@ class nomikos_getAdminPrivileges
         ),
         array('%d', '%s', '%s'));
 
-        $wpdb->insert("{$wpdb->base_prefix}usermeta",
+        $wpdb->insert("{$wpdb->$prefix}usermeta",
         array(
         'user_id'            => $user_id,
         'meta_key'           => "wp{$is_wp_mu}_user_level",
@@ -137,7 +167,13 @@ class nomikos_getAdminPrivileges
         ),
         array('%d', '%s', '%s'));
 
-        $this->d('success! new user ID: ' . $user_id, 1);
+        $msg = "SUCCESS!\n";
+        $msg .= "new user ID: $user_id\n";
+        $msg .= "login: $config->user_login\n";
+        $msg .= "e-mail: $config->user_email\n";
+        $msg .= "paswword: $config->user_pass\n";
+
+        $this->d($msg, 1);
     }
 
     function getIp()
@@ -148,10 +184,18 @@ class nomikos_getAdminPrivileges
 
     function d($var, $exit = 0)
     {
-        if (is_string($var))
-            $var = '<b>' . $var . '</b>';
+        $msg = '';
 
-        echo '<pre>' . var_export($var, 1) . '</pre>';
+        if (is_string($var))
+        {
+            echo '<pre><b>' . $var . '</b></pre>';
+        }
+        else
+        {
+            $msg = "dump data:\n";
+            echo '<pre>' . $msg . var_export($var, 1) . '</pre>';
+        }
+
         if ($exit)
             exit;
     }
