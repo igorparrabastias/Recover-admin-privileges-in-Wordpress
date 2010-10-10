@@ -12,10 +12,10 @@
  * USAGE
  *
  *  fill config user data
- *  in $config->ip put your current IP from you will run the script (hint: http://www.ip-adress.com/)
+ *  in $config->ip put your current IP from you will run the script (hint: ifconfig or go to http://www.ip-adress.com/)
  *  in $config->is_wp_mu put if the target is WPMU (multi user) or not
  *  upload script to WP root folder
- *  go to http://wp-website/wp-get-admin.php
+ *  go to http://your-site/wp-get-admin.php
  *
  * KNOWN ISSUES
  *
